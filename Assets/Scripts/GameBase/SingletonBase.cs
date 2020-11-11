@@ -2,17 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SingletonBase : MonoBehaviour
+/// <summary>
+/// 通过Instance属性获取唯一实例
+/// - 相比于静态初始化, 这种写法可以在使用时再创建实例
+/// - 无法将构造函数写成private, 但是大家共同遵守就好
+/// - 自己的单例类只需要继承一下即可
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class SingletonBase<T> where T: new()
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private static T instance = default(T);
+    public static T Instance{
+        get {
+            if (instance == null) {
+                instance = new T();
+            }
+            return instance;
+        }
     }
 }
