@@ -8,7 +8,7 @@ using UnityEngine;
 /// - 无法将构造函数写成private, 但是大家共同遵守就好
 /// - 自己的单例类只需要继承一下即可
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">具有public构造函数的类, 不能是MonoBehaviour</typeparam>
 public class SingletonBase<T> where T: new()
 {
     private static T instance = default(T);
