@@ -1,20 +1,30 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-// TODO
-class MonoInner : MonoBehaviour
-{
-    private void Update()
-    {
-        MonoManager.Instance.ManagerUpdate();
-    }
-}
+using UnityEngine.Events;
 
 public class MonoManager : SingletonBase<MonoManager>
 {
-    public void ManagerUpdate()
+    private MonoController controller = null;
+    public MonoManager()
     {
-
+        var controllerObj = new GameObject("MonoController");
+        Object.DontDestroyOnLoad(controllerObj);
+        controller = controllerObj.AddComponent<MonoController>();
+    }
+    public void AddUpdateListener(UnityAction listener)
+    {
+        controller.UpdateEvents += listener;
+    }
+    public void RemoveUpdateListener(UnityAction listener)
+    {
+        controller.UpdateEvents -= listener;
+    }
+    public void StartCoroutine(IEnumerator enumerator)
+    {
+        controller.StartCoroutine(enumerator);
+    }
+    public void StopCoroutine(IEnumerator enumerator)
+    {
+        controller.StopCoroutine(enumerator);
     }
 }

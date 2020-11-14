@@ -10,8 +10,8 @@ public class Enemy : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Debug.Log("enemy die!!!");
-            EventManager.Instance.TriggerEvent<Enemy>("EnemyDie", this);
-            EventManager.Instance.TriggerEvent("AddScore");
+            MessageManager.Instance.TriggerEvent<Enemy>("EnemyDie", this);
+            MessageManager.Instance.TriggerEvent("AddScore");
         }
     }
 }

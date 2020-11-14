@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-interface IEventInfo {}
+interface IMsgInfo {}
 
-class EventInfo : IEventInfo
+class MsgInfo : IMsgInfo
 {
     public event UnityAction Listener = null;
     public void TriggerEvent()
@@ -14,7 +14,7 @@ class EventInfo : IEventInfo
     }
 }
 
-class EventInfo<T> : IEventInfo
+class MsgInfo<T> : IMsgInfo
 {
     public event UnityAction<T> Listener = null;
     public void TriggerEvent(T param)
@@ -26,38 +26,38 @@ class EventInfo<T> : IEventInfo
 /// <summary>
 /// 事件的增删清空, 事件分发
 /// </summary>
-public class EventManager : SingletonBase<EventManager>
+public class MessageManager : SingletonBase<MessageManager>
 {
-    private Dictionary<string, IEventInfo> eventDic = null;
+    private Dictionary<string, IMsgInfo> eventDic = null;
 
-    public EventManager()
+    public MessageManager()
     {
-        eventDic = new Dictionary<string, IEventInfo>();
+        eventDic = new Dictionary<string, IMsgInfo>();
     }
 
     public void AddListener(string msg, UnityAction listener)
     {
         if (!eventDic.ContainsKey(msg))
         {
-            eventDic.Add(msg, new EventInfo());
+            eventDic.Add(msg, new MsgInfo());
         }
-        (eventDic[msg] as EventInfo).Listener += listener;
+        (eventDic[msg] as MsgInfo).Listener += listener;
     }
 
     public void AddListener<T>(string msg, UnityAction<T> listener)
     {
         if (!eventDic.ContainsKey(msg))
         {
-            eventDic.Add(msg, new EventInfo<T>());
+            eventDic.Add(msg, new MsgInfo<T>());
         }
-        (eventDic[msg] as EventInfo<T>).Listener += listener;
+        (eventDic[msg] as MsgInfo<T>).Listener += listener;
     }
 
     public void RemoveListener(string msg, UnityAction listener)
     {
         if (eventDic.ContainsKey(msg))
         {
-            (eventDic[msg] as EventInfo).Listener -= listener;
+            (eventDic[msg] as MsgInfo).Listener -= listener;
         }
     }
 
@@ -65,7 +65,7 @@ public class EventManager : SingletonBase<EventManager>
     {
         if (eventDic.ContainsKey(msg))
         {
-            (eventDic[msg] as EventInfo<T>).Listener -= listener;
+            (eventDic[msg] as MsgInfo<T>).Listener -= listener;
         }
     }
 
@@ -73,15 +73,15 @@ public class EventManager : SingletonBase<EventManager>
     {
         if (eventDic.ContainsKey(msg))
         {
-            (eventDic[msg] as EventInfo).TriggerEvent();
+            (eventDic[msg] as MsgInfo).TriggerEvent();
         }
     }
 
-    public void TriggerEvent<T>(string msg, T param)
+    public void TriggerEvent<T>(string strEvent, T param)
     {
-        if (eventDic.ContainsKey(msg))
+        if (eventDic.ContainsKey(strEvent))
         {
-            (eventDic[msg] as EventInfo<T>).TriggerEvent(param);
+            (eventDic[strEvent] as MsgInfo<T>).TriggerEvent(param);
         }
     }
 

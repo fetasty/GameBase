@@ -6,13 +6,13 @@ public class Player : MonoBehaviour
 {
     void Start()
     {
-        EventManager.Instance.AddListener<Enemy>("EnemyDie", OnEnemyDie);
-        EventManager.Instance.AddListener("AddScore", OnAddScore);
+        MessageManager.Instance.AddListener<Enemy>("EnemyDie", OnEnemyDie);
+        MessageManager.Instance.AddListener("AddScore", OnAddScore);
     }
 
     private void OnDestroy() {
-        EventManager.Instance.RemoveListener<Enemy>("EnemyDie", OnEnemyDie);
-        EventManager.Instance.RemoveListener("AddScore", OnAddScore);
+        MessageManager.Instance.RemoveListener<Enemy>("EnemyDie", OnEnemyDie);
+        MessageManager.Instance.RemoveListener("AddScore", OnAddScore);
     }
 
     void Update()
