@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class MonoManager : SingletonBase<MonoManager>
+public class MonoManager : Singleton<MonoManager>
 {
     private MonoController controller = null;
     public MonoManager()

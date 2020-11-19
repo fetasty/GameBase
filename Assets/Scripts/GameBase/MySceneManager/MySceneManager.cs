@@ -1,14 +1,13 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 场景加载管理器
 /// 注意, 使用SceneManager函数加载的场景一定要先在buildsettings中添加到
 /// 构建的场景列表中
 /// </summary>
-public class MySceneManager : SingletonBase<MySceneManager>
+public class MySceneManager : Singleton<MySceneManager>
 {
     /// <summary>
     /// 同步切换场景
@@ -49,11 +48,11 @@ public class MySceneManager : SingletonBase<MySceneManager>
         while (!result.isDone)
         {
             // 通知加载进度变化
-            MessageManager.Instance.TriggerEvent<float>(
-                MessageDefine.SceneLoadProgress,
+            MessageCenter.Instance.SendMessage<float>(
+                BaseMessage.SceneLoadProgress,
                 result.progress
             );
-            yield return result;
+            yield return result.progress;
         }
         if (callback != null)
         {

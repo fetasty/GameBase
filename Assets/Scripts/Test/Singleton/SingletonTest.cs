@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-class TestSingleton : SingletonBase<TestSingleton>
+class TestSingleton : Singleton<TestSingleton>
 {
     public static int Index = 99;
     public int myIndex;

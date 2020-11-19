@@ -1,9 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ResourceManager : SingletonBase<ResourceManager>
+public class ResourceManager : Singleton<ResourceManager>
 {
     /// <summary>
     /// 异步加载资源
@@ -31,21 +30,17 @@ public class ResourceManager : SingletonBase<ResourceManager>
         where T : Object
     {
         var result = Resources.LoadAsync(name);
-        // 这里要循环判断是否加载完成
-        while (!result.isDone)
-        {
-            yield return result;
-        }
-        var res = result.asset;
+        yield return result;
+        var resource = result.asset;
         // 如果是GameObject则先实例化一下再回调
-        if (res is GameObject)
+        if (resource is GameObject)
         {
-            var obj = GameObject.Instantiate(res) as GameObject;
-            callback(obj as T);
+            var obj = Object.Instantiate(resource) as T;
+            callback(obj);
         }
         else
         {
-            callback(res as T);
+            callback(resource as T);
         }
     }
 }

@@ -6,11 +6,11 @@ public class Boss : MonoBehaviour
 {
     void Start()
     {
-        MessageManager.Instance.AddListener<Enemy>("EnemyDie", OnEnemyDie);
+        MessageCenter.Instance.AddListener<Enemy>("EnemyDie", OnEnemyDie);
     }
 
     private void OnDestroy() {
-        MessageManager.Instance.RemoveListener<Enemy>("EnemyDie", OnEnemyDie);
+        MessageCenter.Instance.RemoveListener<Enemy>("EnemyDie", OnEnemyDie);
     }
 
     void Update()

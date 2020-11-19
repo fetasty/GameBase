@@ -53,7 +53,7 @@ class PoolData
     }
 }
 
-public class PoolManager: SingletonBase<PoolManager>
+public class PoolManager: Singleton<PoolManager>
 {
     public static string PoolName = "Pool";
     private Dictionary<string, PoolData> poolDic = new Dictionary<string, PoolData>();
