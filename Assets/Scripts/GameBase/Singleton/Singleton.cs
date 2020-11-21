@@ -5,15 +5,11 @@
 /// - 自己的单例类只需要继承一下即可
 /// </summary>
 /// <typeparam name="T">具有public构造函数的类, 不能是MonoBehaviour</typeparam>
-public class Singleton<T> where T : new()
-{
+public class Singleton<T> where T : new() {
     private static T instance = default(T);
-    public static T Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
+    public static T Instance {
+        get {
+            if (instance == null) {
                 instance = new T();
             }
             return instance;

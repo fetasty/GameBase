@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-class PoolData
-{
+class PoolData {
     private Transform parent = null;
     private Queue<GameObject> objQueue = new Queue<GameObject>();
 
@@ -12,8 +10,7 @@ class PoolData
     /// </summary>
     /// <param name="name">对象名称 (Resources中的资源路径)</param>
     /// <param name="root">缓存池节点</param>
-    public PoolData(string name, Transform root)
-    {
+    public PoolData(string name, Transform root) {
         var parentObj = new GameObject(name);
         this.parent = parentObj.transform;
         this.parent.SetParent(root);
@@ -23,17 +20,13 @@ class PoolData
     /// 从这个类型的缓存池对象中取得一个对应类型对象
     /// </summary>
     /// <returns>对应类型对象</returns>
-    public GameObject GetObject()
-    {
+    public GameObject GetObject() {
         GameObject obj = null;
-        if (objQueue.Count > 0)
-        {
+        if (objQueue.Count > 0) {
             obj = this.objQueue.Dequeue();
             obj.transform.SetParent(null);
             obj.SetActive(true);
-        }
-        else
-        {
+        } else {
             var template = Resources.Load<GameObject>(this.parent.name);
             obj = GameObject.Instantiate<GameObject>(template);
             obj.name = this.parent.name;
@@ -45,22 +38,19 @@ class PoolData
     /// 将对象压入PoolData中
     /// </summary>
     /// <param name="obj">需要缓存的对象</param>
-    public void PushObject(GameObject obj)
-    {
+    public void PushObject(GameObject obj) {
         obj.SetActive(false);
         obj.transform.SetParent(this.parent);
         this.objQueue.Enqueue(obj);
     }
 }
 
-public class PoolManager: Singleton<PoolManager>
-{
+public class PoolManager : Singleton<PoolManager> {
     public static string PoolName = "Pool";
     private Dictionary<string, PoolData> poolDic = new Dictionary<string, PoolData>();
     private Transform root = null;
 
-    public PoolManager()
-    {
+    public PoolManager() {
         var rootObj = new GameObject(PoolName);
         root = rootObj.transform;
     }
@@ -70,10 +60,8 @@ public class PoolManager: Singleton<PoolManager>
     /// </summary>
     /// <param name="name">Resources中的资源名称, 名称包含相对目录, 用于动态创建对象, 也作为key</param>
     /// <returns>对象池中获取的对象</returns>
-    public GameObject GetObject(string name)
-    {
-        if (!poolDic.ContainsKey(name))
-        {
+    public GameObject GetObject(string name) {
+        if (!poolDic.ContainsKey(name)) {
             var poolData = new PoolData(name, this.root);
             poolDic.Add(name, poolData);
         }
@@ -85,10 +73,8 @@ public class PoolManager: Singleton<PoolManager>
     /// </summary>
     /// <param name="name">对象名称, 作为key</param>
     /// <param name="obj">压入的对象</param>
-    public void PushObject(string name, GameObject obj)
-    {
-        if (!poolDic.ContainsKey(name))
-        {
+    public void PushObject(string name, GameObject obj) {
+        if (!poolDic.ContainsKey(name)) {
             var poolData = new PoolData(name, this.root);
             poolDic.Add(name, poolData);
         }
@@ -98,8 +84,7 @@ public class PoolManager: Singleton<PoolManager>
     /// <summary>
     /// 清空缓存池
     /// </summary>
-    public void Clear()
-    {
+    public void Clear() {
         this.poolDic.Clear();
     }
 }
