@@ -112,6 +112,18 @@ public class UIManager : Singleton<UIManager> {
         }
     }
     /// <summary>
+    /// 明确知道不再需要一个panel时, 销毁该panel
+    /// </summary>
+    /// <param name="name">panel资源路径, 基础路径 "UI/"</param>
+    public void DestroyPanel(string name) {
+        name = BASE_PATH + name;
+        if (panelDic.ContainsKey(name)) {
+            Object.Destroy(panelDic[name].gameObject);
+            panelDic.Remove(name);
+            DeleteCache(name);
+        }
+    }
+    /// <summary>
     /// 获取已经创建的panel实例
     /// </summary>
     /// <typeparam name="T">继承于BasePanel的类型</typeparam>
@@ -171,5 +183,14 @@ public class UIManager : Singleton<UIManager> {
             //}
         }
         cacheList.Add(name);
+    }
+
+    private void DeleteCache(string name) {
+        for (int i = 0; i < cacheList.Count; ++i) {
+            if (cacheList[i] == name) {
+                cacheList.RemoveAt(i);
+                break;
+            }
+        }
     }
 }
