@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : Singleton<InputManager> {
-    private HashSet<KeyCode> listenKeySet = new HashSet<KeyCode>();
+    private List<KeyCode> keyCodeList = new List<KeyCode>();
     public InputManager() {
         MonoManager.Instance.AddUpdateListener(Update);
     }
@@ -15,14 +15,16 @@ public class InputManager : Singleton<InputManager> {
     /// </summary>
     /// <param name="key">需要监听的keycode</param>
     public void AddListenKey(KeyCode key) {
-        listenKeySet.Add(key);
+        if (!keyCodeList.Contains(key)) {
+            keyCodeList.Add(key);
+        }
     }
     /// <summary>
     /// 移除对应按键的监听
     /// </summary>
     /// <param name="key">键的keycode</param>
     public void RemoveListenKey(KeyCode key) {
-        listenKeySet.Remove(key);
+        keyCodeList.Remove(key);
     }
     /// <summary>
     /// 每帧检测按键事件
@@ -34,7 +36,8 @@ public class InputManager : Singleton<InputManager> {
     /// 按键事件检测
     /// </summary>
     private void CheckKey() {
-        foreach (var key in listenKeySet) {
+        for (int i = 0; i < keyCodeList.Count; ++i) {
+            var key = keyCodeList[i];
             if (Input.GetKeyDown(key)) {
                 MessageCenter.Instance.SendMessage<KeyCode>(BaseMessage.KeyDown, key);
             } else if (Input.GetKeyUp(key)) {
