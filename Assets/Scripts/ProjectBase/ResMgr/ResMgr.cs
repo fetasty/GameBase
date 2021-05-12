@@ -15,7 +15,12 @@ public class ResMgr : Singleton<ResMgr>
     {
         if (path == null) { throw new System.ArgumentNullException("Path cannot be null!"); }
         T res = Resources.Load<T>(path);
-        if (res is GameObject) { return GameObject.Instantiate(res) as T; }
+        if (res is GameObject)
+        {
+            GameObject obj = GameObject.Instantiate(res) as GameObject;
+            obj.name = path;
+            return obj as T;
+        }
         return res;
     }
 
@@ -42,7 +47,9 @@ public class ResMgr : Singleton<ResMgr>
         Object asset = req.asset;
         if (asset is GameObject)
         {
-            callback.Invoke(GameObject.Instantiate(asset) as T);
+            GameObject obj = GameObject.Instantiate(asset) as GameObject;
+            obj.name = path;
+            callback.Invoke(obj as T);
         }
         else
         {

@@ -11,7 +11,7 @@ public class MessageCenter : Singleton<MessageCenter>
     {
         handleDic = new Dictionary<string, Delegate>();
     }
-    // Ìí¼ÓÎŞ²ÎÏûÏ¢¼àÌı
+    // æ·»åŠ æ— å‚æ¶ˆæ¯ç›‘å¬
     public void AddHandle(string msgName, UnityAction handle)
     {
         OnAddHandle(msgName, handle);
@@ -24,7 +24,7 @@ public class MessageCenter : Singleton<MessageCenter>
             handleDic[msgName] = handle;
         }
     }
-    // Ìí¼Ó´ø²ÎÏûÏ¢¼àÌı
+    // æ·»åŠ å¸¦å‚æ¶ˆæ¯ç›‘å¬
     public void AddHandle<T>(string msgName, UnityAction<T> handle)
     {
         OnAddHandle(msgName, handle);
@@ -37,21 +37,21 @@ public class MessageCenter : Singleton<MessageCenter>
             handleDic[msgName] = handle;
         }
     }
-    // ÒÆ³ıÏûÏ¢¼àÌı
+    // ç§»é™¤æ¶ˆæ¯ç›‘å¬
     public void RemoveHandle(string msgName, UnityAction handle)
     {
         OnRemoveHandle(msgName, handle);
         handleDic[msgName] = (handleDic[msgName] as UnityAction) - handle;
         OnRemovedHandle(msgName);
     }
-    // ÒÆ³ı´ø²ÎÏûÏ¢¼àÌı
+    // ç§»é™¤å¸¦å‚æ¶ˆæ¯ç›‘å¬
     public void RemoveHandle<T>(string msgName, UnityAction<T> handle)
     {
         OnRemoveHandle(msgName, handle);
         handleDic[msgName] = (handleDic[msgName] as UnityAction<T>) - handle;
         OnRemovedHandle(msgName);
     }
-    // ·¢ËÍÎŞ²ÎÏûÏ¢
+    // å‘é€æ— å‚æ¶ˆæ¯
     public void Send(string msgName)
     {
         OnSend(msgName);
@@ -66,7 +66,7 @@ public class MessageCenter : Singleton<MessageCenter>
             (d as UnityAction).Invoke();
         }
     }
-    // ·¢ËÍ´ø²ÎÏûÏ¢
+    // å‘é€å¸¦å‚æ¶ˆæ¯
     public void Send<T>(string msgName, T arg)
     {
         OnSend(msgName);
@@ -81,7 +81,7 @@ public class MessageCenter : Singleton<MessageCenter>
             (d as UnityAction<T>).Invoke(arg);
         }
     }
-    // Çå¿ÕÄ³¸öÏûÏ¢µÄËùÓĞ¼àÌı
+    // æ¸…ç©ºæŸä¸ªæ¶ˆæ¯çš„æ‰€æœ‰ç›‘å¬
     public void Clear(string msgName)
     {
         if (handleDic.ContainsKey(msgName))
@@ -89,7 +89,7 @@ public class MessageCenter : Singleton<MessageCenter>
             handleDic.Remove(msgName);
         }
     }
-    // Çå¿ÕËùÓĞ¼àÌı
+    // æ¸…ç©ºæ‰€æœ‰ç›‘å¬
     public void ClearAll()
     {
         handleDic.Clear();

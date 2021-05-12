@@ -6,8 +6,11 @@ using UnityEngine.Events;
 public class InputMgr : Singleton<InputMgr>
 {
     private HashSet<KeyCode> listenKeySet;
-    private bool listenKey;
-    private bool listenMouse;
+    private bool listenKey = true;
+    private bool listenMouse = true;
+    private float mouseX = 0f;
+    private float mouseY = 0f;
+    private float mouseScroll = 0f;
     public bool ListenKey
     {
         get => listenKey;
@@ -18,50 +21,53 @@ public class InputMgr : Singleton<InputMgr>
         get => listenMouse;
         set => listenMouse = value;
     }
+    public float MouseX { get => mouseX; }
+    public float MouseY { get => mouseY; }
+    public float MouseScroll { get => mouseScroll; }
     public InputMgr()
     {
         listenKeySet = new HashSet<KeyCode>();
         MonoMgr.Instance.AddUpdateAction(Update);
-        listenKey = false;
-        listenMouse = false;
     }
     public void AddListenKey(KeyCode key)
     {
-        lock(this)
+        listenKeySet.Add(key);
+    }
+    public void AddListenKeys(params KeyCode[] keys)
+    {
+        foreach(KeyCode key in keys)
         {
             listenKeySet.Add(key);
         }
     }
     public void RemoveListenKey(KeyCode key)
     {
-        lock(this)
+        listenKeySet.Remove(key);
+    }
+    public void RemoveListenKeys(params KeyCode[] keys)
+    {
+        foreach(KeyCode key in keys)
         {
             listenKeySet.Remove(key);
         }
     }
     public void RemoveAllListenKey()
     {
-        lock(this)
-        {
-            listenKeySet.Clear();
-        }
+        listenKeySet.Clear();
     }
     private void Update()
     {
         if (listenKey)
         {
-            lock (this)
+            foreach (var key in listenKeySet)
             {
-                foreach (var key in listenKeySet)
+                if (Input.GetKeyDown(key))
                 {
-                    if (Input.GetKeyDown(key))
-                    {
-                        MessageCenter.Instance.Send<KeyCode>(BaseConst.Msg_KeyDown, key);
-                    }
-                    if (Input.GetKeyUp(key))
-                    {
-                        MessageCenter.Instance.Send<KeyCode>(BaseConst.Msg_KeyUp, key);
-                    }
+                    MessageCenter.Instance.Send<KeyCode>(BaseConst.Msg_KeyDown, key);
+                }
+                if (Input.GetKeyUp(key))
+                {
+                    MessageCenter.Instance.Send<KeyCode>(BaseConst.Msg_KeyUp, key);
                 }
             }
         }
@@ -78,6 +84,9 @@ public class InputMgr : Singleton<InputMgr>
                     MessageCenter.Instance.Send<int>(BaseConst.Msg_MouseUp, i);
                 }
             }
+            mouseX = Input.GetAxis("Mouse X");
+            mouseY = Input.GetAxis("Mouse Y");
+            mouseScroll = Input.GetAxis("Mouse ScrollWheel");
         }
     }
 }

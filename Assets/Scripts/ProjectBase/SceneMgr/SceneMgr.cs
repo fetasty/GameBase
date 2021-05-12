@@ -12,10 +12,10 @@ public class SceneMgr : Singleton<SceneMgr>
         SceneManager.sceneUnloaded += OnSceneUnloaded;
     }
     /// <summary>
-    /// 异步加载场景, 要加载的场景需要事先添加到BuildSettings的场景列表中
+    /// 寮傛鍔犺浇鍦烘櫙, 瑕佸姞杞界殑鍦烘櫙闇�瑕佷簨鍏堟坊鍔犲埌BuildSettings鐨勫満鏅垪琛ㄤ腑
     /// </summary>
-    /// <param name="sceneName">场景名称</param>
-    /// <param name="callback">场景加载成功回调, 默认为null</param>
+    /// <param name="sceneName">鍦烘櫙鍚嶇О</param>
+    /// <param name="callback">鍦烘櫙鍔犺浇鎴愬姛鍥炶皟, 榛樿涓簄ull</param>
     public void LoadSceneAsync(string sceneName, UnityAction callback = null)
     {
         MonoMgr.Instance.StartCoroutine(LoadSceneCoroutine(sceneName, callback));

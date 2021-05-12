@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class AudioMgr : Singleton<AudioMgr>
 {
-    private const int MAX_CACHE = 20;   // ×î¶à»º´æµÄclip×ÊÔ´ÊıÁ¿
-    private LinkedList<string> cacheList;     // clip×ÊÔ´»º´æ
+    private const int MAX_CACHE = 20;   // æœ€å¤šç¼“å­˜çš„clipèµ„æºæ•°é‡
+    private LinkedList<string> cacheList;     // clipèµ„æºç¼“å­˜
     private Dictionary<string, AudioClip> cacheDic;
-    private AudioSource backSource;     // ±³¾°ÒôÀÖÒôÔ´
-    private AudioSource effectSource;   // ÌØĞ§ÒôĞ§ÒôÔ´
-    private float backVolume;           // ±³¾°ÒôÀÖÒôÁ¿
-    private float effectVolume;         // ÌØĞ§ÒôĞ§ÒôÁ¿
-    private bool isMute;                // ÊÇ·ñ¾²Òô
+    private AudioSource backSource;     // èƒŒæ™¯éŸ³ä¹éŸ³æº
+    private AudioSource effectSource;   // ç‰¹æ•ˆéŸ³æ•ˆéŸ³æº
+    private float backVolume;           // èƒŒæ™¯éŸ³ä¹éŸ³é‡
+    private float effectVolume;         // ç‰¹æ•ˆéŸ³æ•ˆéŸ³é‡
+    private bool isMute;                // æ˜¯å¦é™éŸ³
     private bool isResLoading;
     public AudioMgr()
     {
@@ -27,9 +27,9 @@ public class AudioMgr : Singleton<AudioMgr>
         isResLoading = false;
     }
     /// <summary>
-    /// ²¥·Å±³¾°ÒôÀÖ
+    /// æ’­æ”¾èƒŒæ™¯éŸ³ä¹
     /// </summary>
-    /// <param name="resName">×ÊÔ´Ãû, Ïà¶ÔÓÚResourcesÏÂµÄ×ÊÔ´Â·¾¶</param>
+    /// <param name="resName">èµ„æºå, ç›¸å¯¹äºResourcesä¸‹çš„èµ„æºè·¯å¾„</param>
     public void PlayBackMusic(string resName)
     {
         if (cacheDic.ContainsKey(resName))
@@ -43,18 +43,15 @@ public class AudioMgr : Singleton<AudioMgr>
         }
         else
         {
-            lock(this)
+            if (isResLoading)
             {
-                if (isResLoading)
-                {
-                    Debug.LogWarning($"Try to play clip {resName} witch is loading");
-                    return;
-                }
-                isResLoading = true;
+                Debug.LogWarning($"Try to play clip {resName} witch is loading");
+                return;
             }
+            isResLoading = true;
             ResMgr.Instance.LoadAsync<AudioClip>(resName, (clip) =>
             {
-                lock(this) { isResLoading = false; }
+                isResLoading = false;
                 if (clip == null) { Debug.LogWarning($"Load clip {resName} failed!"); }
                 else
                 {
@@ -66,23 +63,23 @@ public class AudioMgr : Singleton<AudioMgr>
         }
     }
     /// <summary>
-    /// ÔİÍ£±³¾°ÒôÀÖ
+    /// æš‚åœèƒŒæ™¯éŸ³ä¹
     /// </summary>
     public void PauseBackMusic()
     {
         backSource.Pause();
     }
     /// <summary>
-    /// Í£Ö¹±³¾°ÒôÀÖ
+    /// åœæ­¢èƒŒæ™¯éŸ³ä¹
     /// </summary>
     public void StopBackMusic()
     {
         backSource.Stop();
     }
     /// <summary>
-    /// ²¥·Å¼ò¶ÌµÄÌØĞ§ÒôĞ§
+    /// æ’­æ”¾ç®€çŸ­çš„ç‰¹æ•ˆéŸ³æ•ˆ
     /// </summary>
-    /// <param name="resName">×ÊÔ´Ãû, Ïà¶ÔÓÚResourcesÄ¿Â¼µÄÂ·¾¶</param>
+    /// <param name="resName">èµ„æºå, ç›¸å¯¹äºResourcesç›®å½•çš„è·¯å¾„</param>
     public void PlayEffectAudio(string resName)
     {
         if (cacheDic.ContainsKey(resName))
@@ -94,18 +91,15 @@ public class AudioMgr : Singleton<AudioMgr>
         }
         else
         {
-            lock (this)
+            if (isResLoading)
             {
-                if (isResLoading)
-                {
-                    Debug.LogWarning($"Try to play clip {resName} witch is loading");
-                    return;
-                }
-                isResLoading = true;
+                Debug.LogWarning($"Try to play clip {resName} witch is loading");
+                return;
             }
+            isResLoading = true;
             ResMgr.Instance.LoadAsync<AudioClip>(resName, (clip) =>
             {
-                lock (this) { isResLoading = false; }
+                isResLoading = false;
                 if (clip == null) { Debug.LogWarning($"Load clip {resName} failed!"); }
                 else
                 {
@@ -116,41 +110,41 @@ public class AudioMgr : Singleton<AudioMgr>
         }
     }
     /// <summary>
-    /// ÔİÍ£ÌØĞ§ÒôĞ§
+    /// æš‚åœç‰¹æ•ˆéŸ³æ•ˆ
     /// </summary>
     public void PauseEffectAudio()
     {
         effectSource.Pause();
     }
     /// <summary>
-    /// Í£Ö¹ÌØĞ§ÒôĞ§
+    /// åœæ­¢ç‰¹æ•ˆéŸ³æ•ˆ
     /// </summary>
     public void StopEffectAudio()
     {
         effectSource.Stop();
     }
     /// <summary>
-    /// ÉèÖÃ±³¾°ÒôÀÖÒôÁ¿
+    /// è®¾ç½®èƒŒæ™¯éŸ³ä¹éŸ³é‡
     /// </summary>
-    /// <param name="volume">ÒôÁ¿Öµ(0-1)</param>
-    public void SetBackVolume(float volume)
+    /// <param name="volume">éŸ³é‡å€¼(0-1)</param>
+    public void SetMusicVolume(float volume)
     {
         backVolume = Mathf.Clamp01(volume);
         backSource.volume = backVolume;
     }
     /// <summary>
-    /// ÉèÖÃÌØĞ§ÒôĞ§ÒôÁ¿
+    /// è®¾ç½®ç‰¹æ•ˆéŸ³æ•ˆéŸ³é‡
     /// </summary>
-    /// <param name="volume">ÒôÁ¿´óĞ¡(0-1)</param>
+    /// <param name="volume">éŸ³é‡å¤§å°(0-1)</param>
     public void SetEffectVolume(float volume)
     {
         effectVolume = Mathf.Clamp01(volume);
         effectSource.volume = effectVolume;
     }
     /// <summary>
-    /// ÉèÖÃ¾²Òô
+    /// è®¾ç½®é™éŸ³
     /// </summary>
-    /// <param name="mute">ÊÇ·ñ¾²Òô</param>
+    /// <param name="mute">æ˜¯å¦é™éŸ³</param>
     public void SetMute(bool mute)
     {
         isMute = mute;

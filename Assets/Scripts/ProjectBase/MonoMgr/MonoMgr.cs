@@ -12,37 +12,37 @@ public class MonoMgr : Singleton<MonoMgr>
         Object.DontDestroyOnLoad(obj);
         controller = obj.AddComponent<MonoController>();
     }
-    // Ìí¼ÓÍâ²¿Updateº¯Êı
+    // æ·»åŠ å¤–éƒ¨Updateå‡½æ•°
     public void AddUpdateAction(UnityAction action)
     {
         controller.updateEvent += action;
     }
-    // ÒÆ³ıÍâ²¿µÄUpdateº¯Êı
+    // ç§»é™¤å¤–éƒ¨çš„Updateå‡½æ•°
     public void RemoveUpdateAction(UnityAction action)
     {
         controller.updateEvent -= action;
     }
-    // ¿ªÆôĞ­³Ì
+    // å¼€å¯åç¨‹
     public Coroutine StartCoroutine(IEnumerator ie)
     {
         return controller.StartCoroutine(ie);
     }
-    // Í£Ö¹ËùÓĞĞ­³Ì
+    // åœæ­¢æ‰€æœ‰åç¨‹
     public void StopAllCoroutines()
     {
         controller.StopAllCoroutines();
     }
-    // ¸ù¾İµü´úÆ÷Í£Ö¹Ò»¸öĞ­³Ì
+    // æ ¹æ®è¿­ä»£å™¨åœæ­¢ä¸€ä¸ªåç¨‹
     public void StopCoroutine(IEnumerator ie)
     {
         controller.StopCoroutine(ie);
     }
-    // ¸ù¾İCoroutine¶ÔÏóÍ£Ö¹Ò»¸öĞ­³Ì
+    // æ ¹æ®Coroutineå¯¹è±¡åœæ­¢ä¸€ä¸ªåç¨‹
     public void StopCoroutine(Coroutine co)
     {
         controller.StopCoroutine(co);
     }
-    // »ùÓÚĞ­³ÌµÄÑÓÊ±º¯Êı
+    // åŸºäºåç¨‹çš„å»¶æ—¶å‡½æ•°
     public void Invoke(UnityAction action, float seconds)
     {
         if (action == null)

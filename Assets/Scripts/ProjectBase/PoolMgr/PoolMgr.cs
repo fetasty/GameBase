@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-// Ò»¸öºĞ×Ó, ´æ·ÅÒ»ÖÖÀàĞÍµÄGameObject
+// ä¸€ä¸ªç›’å­, å­˜æ”¾ä¸€ç§ç±»å‹çš„GameObject
 public class PoolBox
 {
     private Transform box;
     private string resName;
     private Queue<GameObject> queue;
     private bool isResLoading;
-
     public PoolBox(string resName, Transform root)
     {
         this.resName = resName;
@@ -30,24 +29,18 @@ public class PoolBox
         }
         else
         {
-            // ¶ÔÓÚÍ¬Ò»¸ö×ÊÔ´²»Ó¦¸Ã¶ÌÊ±¼äÄÚ¶à´Î¼ÓÔØ
-            lock(this)
+            // å¯¹äºåŒä¸€ä¸ªèµ„æºä¸åº”è¯¥çŸ­æ—¶é—´å†…å¤šæ¬¡åŠ è½½
+            if (isResLoading)
             {
-                if (isResLoading)
-                {
-                    Debug.LogWarning($"Requre object {resName}. But res {resName} is loading.");
-                    callback.Invoke(null);
-                    return;
-                }
-                isResLoading = true;
+                Debug.LogWarning($"Requre object {resName}. But res {resName} is loading.");
+                callback.Invoke(null);
+                return;
             }
+            isResLoading = true;
             ResMgr.Instance.LoadAsync<GameObject>(resName, (res) =>
             {
-                // ¸Ã»Øµ÷±Ø±»µ÷ÓÃ, Íâ²¿ÒÑÈ·ÈÏ²ÎÊı·Çnull
-                lock(this)
-                {
-                    isResLoading = false;
-                }
+                // è¯¥å›è°ƒå¿…è¢«è°ƒç”¨, å¤–éƒ¨å·²ç¡®è®¤å‚æ•°énull
+                isResLoading = false;
                 res.name = resName;
                 callback.Invoke(res);
             });
@@ -59,11 +52,16 @@ public class PoolBox
         obj.SetActive(false);
         queue.Enqueue(obj);
     }
+    // é‡Šæ”¾è¯¥PoolBox, é‡Šæ”¾åboxä¸å†å¯ç”¨!!!
+    public void Clear()
+    {
+        Object.Destroy(box.gameObject);
+    }
 }
 
 /// <summary>
-/// »º´æ³Ø
-/// Ê¹ÓÃ×¢Òâ: ´Ó»º´æ³Ø»ñÈ¡µÄÓÎÏ·¶ÔÏó, ½Å±¾³õÊ¼»¯Ó¦¸Ã·ÅÔÚOnEnableÖĞ
+/// ç¼“å­˜æ± 
+/// ä½¿ç”¨æ³¨æ„: ä»ç¼“å­˜æ± è·å–çš„æ¸¸æˆå¯¹è±¡, è„šæœ¬åˆå§‹åŒ–åº”è¯¥æ”¾åœ¨OnEnableä¸­
 /// </summary>
 public class PoolMgr : Singleton<PoolMgr>
 {
@@ -76,11 +74,11 @@ public class PoolMgr : Singleton<PoolMgr>
         boxDic = new Dictionary<string, PoolBox>();
     }
     /// <summary>
-    /// ´Ó»º´æ³ØÈ¡Ò»¸öÓÎÏ·¶ÔÏó, ²»´æÔÚÔò×Ô¶¯´´½¨, È¡³öÊ±×Ô¶¯¼¤»î
+    /// ä»ç¼“å­˜æ± å–ä¸€ä¸ªæ¸¸æˆå¯¹è±¡, ä¸å­˜åœ¨åˆ™è‡ªåŠ¨åˆ›å»º, å–å‡ºæ—¶è‡ªåŠ¨æ¿€æ´»
     /// </summary>
-    /// <typeparam name="T">¶ÔÏóÀàĞÍ</typeparam>
-    /// <param name="resName">¶ÔÏó×ÊÔ´Ãû, Ïà¶ÔÓÚResourcesÄ¿Â¼µÄÂ·¾¶Ãû</param>
-    /// <param name="callback">¶ÔÏó´¦Àí»Øµ÷</param>
+    /// <typeparam name="T">å¯¹è±¡ç±»å‹</typeparam>
+    /// <param name="resName">å¯¹è±¡èµ„æºå, ç›¸å¯¹äºResourcesç›®å½•çš„è·¯å¾„å</param>
+    /// <param name="callback">å¯¹è±¡å¤„ç†å›è°ƒ</param>
     public void Get(string resName, UnityAction<GameObject> callback)
     {
         if (resName == null || callback == null)
@@ -94,9 +92,9 @@ public class PoolMgr : Singleton<PoolMgr>
         boxDic[resName].Get(callback);
     }
     /// <summary>
-    /// ¹é»¹ÓÎÏ·¶ÔÏóµ½»º´æ³Ø
+    /// å½’è¿˜æ¸¸æˆå¯¹è±¡åˆ°ç¼“å­˜æ± 
     /// </summary>
-    /// <param name="obj">¹é»¹µÄ¶ÔÏó</param>
+    /// <param name="obj">å½’è¿˜çš„å¯¹è±¡</param>
     public void Return(GameObject obj)
     {
         if (obj == null)
@@ -110,21 +108,27 @@ public class PoolMgr : Singleton<PoolMgr>
         boxDic[obj.name].Return(obj);
     }
     /// <summary>
-    /// Çå¿ÕÒ»¸ö'³éÌë'µÄÓÎÏ·¶ÔÏó
+    /// æ¸…ç©ºä¸€ä¸ª'æŠ½å±‰'çš„æ¸¸æˆå¯¹è±¡
     /// </summary>
-    /// <param name="resName">ÓÎÏ·¶ÔÏóÃû³Æ/³éÌëÃû³Æ</param>
+    /// <param name="resName">æ¸¸æˆå¯¹è±¡åç§°/æŠ½å±‰åç§°</param>
     public void Clear(string resName)
     {
         if (boxDic.ContainsKey(resName))
         {
+            PoolBox box = boxDic[resName];
             boxDic.Remove(resName);
+            box.Clear();
         }
     }
     /// <summary>
-    /// Çå¿ÕÕû¸ö»º´æ³Ø
+    /// æ¸…ç©ºæ•´ä¸ªç¼“å­˜æ± 
     /// </summary>
     public void ClearAll()
     {
+        foreach (var value in boxDic.Values)
+        {
+            value.Clear();
+        }
         boxDic.Clear();
     }
 }
